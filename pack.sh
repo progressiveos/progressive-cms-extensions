@@ -16,8 +16,9 @@ mkdir -p dist
 # Public and private histories must produce the same supply from the same files.
 work=$(mktemp -d)
 trap 'rm -rf "$work"' EXIT HUP INT TERM
-git archive -o "$work/source.tar" "$tag" "packages/$name"
-tar -xf "$work/source.tar" -C "$work"
+# Preserve the canonical Git modes, independent of caller umask or Git config.
+git -c tar.umask=0002 archive -o "$work/source.tar" "$tag" "packages/$name"
+tar -xpf "$work/source.tar" -C "$work"
 tar --sort=name --mtime=@0 --owner=0 --group=0 --numeric-owner \
   -C "$work" -cf "$work/package.tar" "packages/$name"
 gzip -n < "$work/package.tar" > "dist/$name-$version.tar.gz"
