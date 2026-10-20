@@ -1,0 +1,117 @@
+{
+  "id": "progressive-media.openrouter",
+  "name": "Progressive Media — OpenRouter",
+  "version": "1.0.4",
+  "extension_contract": "2.0",
+  "cms_compatibility": ">=1.0.0-rc.1 <2.0.0",
+  "requires": [],
+  "provides": [],
+  "permissions": [
+    "media.generate",
+    "media.providers.manage"
+  ],
+  "config_schema": {
+    "type": "object",
+    "additionalProperties": false,
+    "properties": {
+      "api_key": {
+        "type": "object",
+        "format": "secret-ref"
+      },
+      "base_url": {
+        "type": "string",
+        "maxLength": 200,
+        "default": "https://openrouter.ai/api/v1",
+        "description": "OpenRouter API base (Images API lives under /images)"
+      },
+      "default_model": {
+        "type": "string",
+        "maxLength": 200,
+        "default": "google/gemini-2.5-flash-image",
+        "description": "Default image model id, e.g. google/gemini-2.5-flash-image"
+      },
+      "network": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "mode": {
+            "enum": [
+              "direct",
+              "socks5",
+              "direct_then_socks5"
+            ]
+          },
+          "proxy_host": {
+            "type": "string",
+            "maxLength": 255
+          },
+          "proxy_port": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 65535
+          },
+          "remote_dns": {
+            "type": "boolean"
+          },
+          "proxy_username": {
+            "type": "string",
+            "maxLength": 255
+          }
+        }
+      },
+      "proxy_password": {
+        "type": "object",
+        "format": "secret-ref"
+      },
+      "models": {
+        "type": "array",
+        "maxItems": 8,
+        "default": [],
+        "description": "Configured models: model id + stored capability snapshot + per-model params. Takes precedence over default_model.",
+        "items": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "model"
+          ],
+          "properties": {
+            "model": {
+              "type": "string",
+              "maxLength": 200,
+              "description": "OpenRouter image model id, e.g. google/gemini-2.5-flash-image"
+            },
+            "params": {
+              "type": "object",
+              "additionalProperties": true,
+              "description": "Per-model passthrough fields merged into /images requests"
+            },
+            "capabilities": {
+              "type": "object",
+              "additionalProperties": true,
+              "description": "Stored capability snapshot (catalog-derived; refreshed by re-sync)"
+            }
+          }
+        }
+      }
+    }
+  },
+  "data_policy": "retain",
+  "entrypoint": {
+    "type": "module"
+  },
+  "registrations": {
+    "providers": [
+      {
+        "registry": "image_generation_provider",
+        "provider_id": "openrouter",
+        "title": "OpenRouter",
+        "handler": "createGenerationProvider"
+      }
+    ]
+  },
+  "description": {
+    "ru": "Генерация изображений через OpenRouter",
+    "en": "Image generation via OpenRouter"
+  },
+  "icon": "magic"
+}

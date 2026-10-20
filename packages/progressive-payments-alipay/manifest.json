@@ -1,0 +1,29 @@
+{
+  "id": "progressive-payments.alipay",
+  "name": "Alipay payment provider",
+  "version": "1.0.4",
+  "extension_contract": "2.0",
+  "cms_compatibility": ">=1.0.0-rc.1 <2.0.0",
+  "entrypoint": {
+    "type": "module"
+  },
+  "permissions": [],
+  "requires": [],
+  "provides": [],
+  "description": {
+    "ru": "Платёжный провайдер alipay (trusted first-party пакет)",
+    "en": "alipay payment provider (trusted first-party package)"
+  },
+  "icon": "payments",
+  "registrations": {
+    "providers": [
+      {
+        "registry": "payment_provider",
+        "provider_id": "alipay",
+        "title": "Alipay payment provider",
+        "handler": "createAlipayProvider"
+      }
+    ]
+  },
+  "data_policy": "retain"
+}

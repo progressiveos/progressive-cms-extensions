@@ -1,0 +1,151 @@
+{
+  "id": "progressive.platform-fixture",
+  "name": "Platform Surface Fixture",
+  "version": "1.3.4",
+  "extension_contract": "2.0",
+  "cms_compatibility": ">=1.0.0-rc.1 <2.0.0",
+  "entrypoint": {
+    "type": "module"
+  },
+  "permission_namespace": "platform",
+  "permissions": [
+    "platform.test.read",
+    "platform.test.write"
+  ],
+  "requires": [],
+  "provides": [],
+  "description": {
+    "ru": "Фикстура Extension Contract 2.0 (маршруты/views/источники/транзакции). Не входит в production-композицию.",
+    "en": "Extension Contract 2.0 fixture (routes/views/sources/transactions). Not part of the production composition."
+  },
+  "icon": "extensions",
+  "migrations": {
+    "dir": "migrations"
+  },
+  "data_policy": "retain",
+  "registrations": {
+    "http_routes": [
+      {
+        "route_id": "widget",
+        "method": "GET",
+        "path": "widgets/:slug",
+        "visibility": "public",
+        "handler": "widgetPage",
+        "view": "widget"
+      },
+      {
+        "route_id": "create",
+        "method": "POST",
+        "path": "widgets",
+        "visibility": "admin",
+        "permission": "platform.test.write",
+        "handler": "createWidget"
+      },
+      {
+        "route_id": "create-note",
+        "method": "POST",
+        "path": "widgets/:slug/notes",
+        "visibility": "public",
+        "handler": "createNote"
+      }
+    ],
+    "views": [
+      {
+        "view_id": "widget",
+        "view_model_schema_version": "1.0.0",
+        "view_model_schema": {
+          "type": "object"
+        },
+        "base_template": "templates/base.liquid"
+      }
+    ],
+    "operations": [
+      {
+        "operation_id": "create-item",
+        "permission": "platform.test.write",
+        "mutation": true,
+        "title": "Create fixture item (transactional)",
+        "input_schema": {
+          "type": "object",
+          "required": [
+            "slug",
+            "title"
+          ],
+          "properties": {
+            "slug": {
+              "type": "string"
+            },
+            "title": {
+              "type": "string"
+            },
+            "media_id": {
+              "type": "string"
+            },
+            "fail_after_write": {
+              "type": "boolean"
+            }
+          }
+        },
+        "output_schema": {
+          "type": "object"
+        },
+        "handler": "createItemOperation"
+      },
+      {
+        "operation_id": "enqueue-touch-item",
+        "permission": "platform.test.write",
+        "mutation": true,
+        "title": "Enqueue fixture touch-item job (shared queue)",
+        "input_schema": {
+          "type": "object",
+          "required": [
+            "slug"
+          ],
+          "properties": {
+            "slug": {
+              "type": "string"
+            },
+            "idempotency_key": {
+              "type": "string"
+            },
+            "delay_seconds": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 3600
+            }
+          }
+        },
+        "output_schema": {
+          "type": "object"
+        },
+        "handler": "enqueueTouchItem"
+      }
+    ],
+    "sitemap_sources": [
+      {
+        "source_id": "widgets",
+        "handler": "sitemapWidgets"
+      }
+    ],
+    "search_sources": [
+      {
+        "source_id": "item",
+        "handler": "searchItem",
+        "page_ids_handler": "searchItemIds"
+      }
+    ],
+    "media_usage_sources": [
+      {
+        "source_id": "items",
+        "handler": "mediaUsage"
+      }
+    ],
+    "jobs": [
+      {
+        "job_id": "touch-item",
+        "handler": "touchItemJob",
+        "payload_version": 1
+      }
+    ]
+  }
+}

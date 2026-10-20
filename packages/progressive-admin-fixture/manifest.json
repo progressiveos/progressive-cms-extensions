@@ -1,0 +1,21 @@
+{
+  "id": "progressive.admin-fixture",
+  "name": "Admin UI Contract Fixture",
+  "version": "1.0.5",
+  "extension_contract": "2.0",
+  "cms_compatibility": ">=1.0.0-rc.1 <2.0.0",
+  "entrypoint": {
+    "type": "module"
+  },
+  "permissions": [],
+  "requires": [],
+  "provides": [],
+  "description": {
+    "ru": "Фикстура UI-контракта Admin (навигация/экран/переводы/ассет). Не входит в production-композицию.",
+    "en": "Admin UI contract fixture (nav/screen/translations/asset). Not part of the production composition."
+  },
+  "icon": "extensions",
+  "admin_contributions": true,
+  "registrations": {},
+  "data_policy": "drop"
+}

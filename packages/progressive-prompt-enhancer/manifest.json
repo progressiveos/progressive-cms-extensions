@@ -1,0 +1,185 @@
+{
+  "id": "progressive.prompt-enhancer",
+  "name": "Progressive Prompt Enhancer",
+  "version": "1.0.4",
+  "extension_contract": "2.0",
+  "cms_compatibility": ">=1.0.0-rc.1 <2.0.0",
+  "data_policy": "drop",
+  "entrypoint": {
+    "type": "module"
+  },
+  "permissions": [
+    "media.generate"
+  ],
+  "requires": [],
+  "provides": [],
+  "registrations": {
+    "operations": [
+      {
+        "operation_id": "enhance-prompt",
+        "permission": "media.generate",
+        "mutation": false,
+        "title": "Improve an image-generation prompt via an OpenAI-compatible chat model",
+        "input_schema": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "prompt"
+          ],
+          "properties": {
+            "prompt": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 8000,
+              "description": "The original prompt to improve"
+            },
+            "context": {
+              "type": "string",
+              "maxLength": 2000,
+              "description": "Optional usage context (page, audience, subject) that steers the rewrite"
+            },
+            "language": {
+              "type": "string",
+              "maxLength": 30,
+              "description": "Optional output language hint, e.g. ru or en"
+            }
+          }
+        },
+        "output_schema": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "prompt"
+          ],
+          "properties": {
+            "prompt": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 16000,
+              "description": "The improved prompt (never applied automatically — the caller chooses)"
+            },
+            "model": {
+              "type": "string",
+              "maxLength": 200,
+              "description": "Chat model that produced the improvement"
+            }
+          }
+        },
+        "handler": "enhancePrompt",
+        "capability": "media.prompt-enhance"
+      }
+    ]
+  },
+  "config_schema": {
+    "type": "object",
+    "additionalProperties": false,
+    "properties": {
+      "api_key": {
+        "type": "object",
+        "format": "secret-ref"
+      },
+      "network": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "mode": {
+            "enum": [
+              "direct",
+              "socks5",
+              "direct_then_socks5"
+            ]
+          },
+          "proxy_host": {
+            "type": "string",
+            "maxLength": 255
+          },
+          "proxy_port": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 65535
+          },
+          "remote_dns": {
+            "type": "boolean"
+          },
+          "proxy_username": {
+            "type": "string",
+            "maxLength": 255
+          }
+        }
+      },
+      "proxy_password": {
+        "type": "object",
+        "format": "secret-ref"
+      },
+      "base_url": {
+        "type": "string",
+        "maxLength": 300,
+        "default": "",
+        "description": "OpenAI-compatible base URL, e.g. https://openrouter.ai/api/v1, https://api.openai.com/v1 or http://ollama-host:11434/v1"
+      },
+      "model": {
+        "type": "string",
+        "maxLength": 200,
+        "default": "",
+        "description": "Chat model identifier at the endpoint, e.g. openai/gpt-4.1-mini or llama3.1:8b"
+      },
+      "reasoning_level": {
+        "enum": [
+          "provider_default",
+          "off",
+          "low",
+          "medium",
+          "high"
+        ],
+        "default": "provider_default",
+        "description": "Reasoning effort requested from the model; off actively disables reasoning"
+      },
+      "reasoning_style": {
+        "enum": [
+          "auto",
+          "openai",
+          "openrouter",
+          "ollama",
+          "none"
+        ],
+        "default": "auto",
+        "description": "Wire mapping for the reasoning knob — providers spell it differently; auto guesses from base_url, none never sends reasoning fields"
+      },
+      "temperature": {
+        "type": "number",
+        "minimum": 0,
+        "maximum": 2,
+        "default": 0.7
+      },
+      "top_p": {
+        "type": "number",
+        "minimum": 0,
+        "maximum": 1,
+        "default": 1
+      },
+      "max_output_tokens": {
+        "type": "integer",
+        "minimum": 1,
+        "maximum": 32000,
+        "default": 2000
+      },
+      "timeout_ms": {
+        "type": "integer",
+        "minimum": 1000,
+        "maximum": 120000,
+        "default": 30000
+      },
+      "system": {
+        "type": "string",
+        "maxLength": 4000,
+        "default": "",
+        "description": "Optional system prompt override; empty uses the built-in prompt-improvement system prompt"
+      }
+    }
+  },
+  "description": {
+    "ru": "Улучшение промптов для генерации изображений",
+    "en": "Improves image-generation prompts"
+  },
+  "icon": "edit"
+}

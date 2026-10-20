@@ -1,0 +1,23 @@
+{
+  "id": "progressive.site-migration",
+  "name": "Progressive Site Migration",
+  "version": "1.0.4",
+  "extension_contract": "2.0",
+  "cms_compatibility": ">=1.0.0-rc.1 <2.0.0",
+  "requires": [],
+  "provides": [],
+  "permissions": [
+    "routing.redirects.import",
+    "media.import"
+  ],
+  "data_policy": "retain",
+  "entrypoint": {
+    "type": "module"
+  },
+  "registrations": {},
+  "description": {
+    "ru": "Перенос сайтов со старых платформ (MODX/Bitrix/WordPress/Tilda)",
+    "en": "Site migration from legacy platforms (MODX/Bitrix/WordPress/Tilda)"
+  },
+  "icon": "navigation"
+}

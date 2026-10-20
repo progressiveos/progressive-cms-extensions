@@ -1,0 +1,128 @@
+{
+  "id": "progressive-media.runware",
+  "name": "Progressive Media — Runware",
+  "version": "1.0.4",
+  "extension_contract": "2.0",
+  "cms_compatibility": ">=1.0.0-rc.1 <2.0.0",
+  "requires": [],
+  "provides": [],
+  "permissions": [
+    "media.generate",
+    "media.providers.manage"
+  ],
+  "config_schema": {
+    "type": "object",
+    "additionalProperties": false,
+    "properties": {
+      "api_key": {
+        "type": "object",
+        "format": "secret-ref"
+      },
+      "model": {
+        "type": "string",
+        "maxLength": 200,
+        "default": "runware:z-image@turbo",
+        "description": "Default imageInference model identifier (Runware air-id, e.g. runware:z-image@turbo)"
+      },
+      "network": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "mode": {
+            "enum": [
+              "direct",
+              "socks5",
+              "direct_then_socks5"
+            ]
+          },
+          "proxy_host": {
+            "type": "string",
+            "maxLength": 255
+          },
+          "proxy_port": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 65535
+          },
+          "remote_dns": {
+            "type": "boolean"
+          },
+          "proxy_username": {
+            "type": "string",
+            "maxLength": 255
+          }
+        }
+      },
+      "proxy_password": {
+        "type": "object",
+        "format": "secret-ref"
+      },
+      "model_slug": {
+        "type": "string",
+        "maxLength": 200,
+        "default": "alibaba-z-image-turbo",
+        "description": "Model page slug under runware.ai/docs/models/<slug>/schema.json used to resolve model-specific request fields"
+      },
+      "model_params": {
+        "type": "object",
+        "default": {},
+        "description": "Model-specific request fields passed through to imageInference (validated against the model schema), e.g. {\"steps\": 8, \"CFGScale\": 7} or {\"providerSettings\": {\"bfl\": {\"safetyTolerance\": 2}}}",
+        "additionalProperties": true
+      },
+      "models": {
+        "type": "array",
+        "maxItems": 8,
+        "default": [],
+        "description": "Configured models (Image Generation v2): air-id + docs slug + stored capability snapshot + per-model params. Takes precedence over the scalar model/model_slug/model_params shape.",
+        "items": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "model"
+          ],
+          "properties": {
+            "model": {
+              "type": "string",
+              "maxLength": 200,
+              "description": "Runware air-id, e.g. runware:z-image@turbo"
+            },
+            "slug": {
+              "type": "string",
+              "maxLength": 200,
+              "description": "Model page slug under runware.ai/docs/models/<slug>/schema.json"
+            },
+            "params": {
+              "type": "object",
+              "additionalProperties": true,
+              "description": "Per-model request fields merged into imageInference (schema-validated)"
+            },
+            "capabilities": {
+              "type": "object",
+              "additionalProperties": true,
+              "description": "Stored capability snapshot (schema-derived; refreshed by re-sync)"
+            }
+          }
+        }
+      }
+    }
+  },
+  "data_policy": "retain",
+  "entrypoint": {
+    "type": "module"
+  },
+  "registrations": {
+    "providers": [
+      {
+        "registry": "image_generation_provider",
+        "provider_id": "runware",
+        "title": "Runware",
+        "handler": "createGenerationProvider"
+      }
+    ]
+  },
+  "description": {
+    "ru": "Генерация изображений через Runware",
+    "en": "Image generation via Runware"
+  },
+  "icon": "magic"
+}

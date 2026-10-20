@@ -1,0 +1,55 @@
+{
+  "id": "com.example.reference-site",
+  "name": "Reference Site Extension",
+  "version": "1.0.3",
+  "extension_contract": "2.0",
+  "cms_compatibility": ">=1.0.0-rc.1 <2.0.0",
+  "requires": [
+    {
+      "capability": "theme-contract",
+      "range": "^1.0.0"
+    }
+  ],
+  "provides": [
+    {
+      "capability": "com.example.reference-site.notes",
+      "version": "1.0.0"
+    }
+  ],
+  "permissions": [],
+  "config_schema": {
+    "type": "object",
+    "additionalProperties": false,
+    "properties": {
+      "note_template": {
+        "type": "string",
+        "maxLength": 200,
+        "default": "published: {title}"
+      }
+    }
+  },
+  "migrations": {
+    "dir": "migrations"
+  },
+  "data_policy": "retain",
+  "entrypoint": {
+    "type": "module",
+    "factory": "createReferenceSiteExtensionModule"
+  },
+  "registrations": {
+    "event_subscriptions": [
+      {
+        "subscription_id": "on-entry-published",
+        "event_type": "EntryPublished",
+        "handler": "onEntryPublished"
+      }
+    ],
+    "validators": [
+      {
+        "point": "publication",
+        "validator_id": "title-required",
+        "handler": "validatePublication"
+      }
+    ]
+  }
+}
